@@ -1,0 +1,71 @@
+SCRIPTS
+
+-- Tabla para usuarios
+CREATE TABLE Usuario (
+    idUsuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombreUsuario VARCHAR(100) NOT NULL,
+    contraseña VARCHAR(100) NOT NULL,
+    idRol INT,
+    estatus 
+    FOREIGN KEY (idRol) REFERENCES Rol(idRol)
+);
+
+-- Tabla para productos
+CREATE TABLE Producto (
+    idProducto INT AUTO_INCREMENT PRIMARY KEY,
+    nombreProducto VARCHAR(100) NOT NULL,
+    cantidadInicial INT DEFAULT 0,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+);
+
+-- Tabla para movimientos
+CREATE TABLE Movimiento (
+    idMovimiento INT AUTO_INCREMENT PRIMARY KEY,
+    tipoMovimiento ENUM('Entrada', 'Salida') NOT NULL,
+    cantidad INT NOT NULL,
+    fechaHora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    idUsuario INT,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+);
+
+-- Tabla para roles
+CREATE TABLE Rol (
+    idRol INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+-- Tabla para permisos
+CREATE TABLE Permiso (
+    idPermiso INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255) NOT NULL
+);
+
+-- Tabla intermedia para la relación muchos a muchos entre Rol y Permiso
+CREATE TABLE Rol_Permiso (
+    idRol INT,
+    idPermiso INT,
+    PRIMARY KEY (idRol, idPermiso),
+    FOREIGN KEY (idRol) REFERENCES Rol(idRol),
+    FOREIGN KEY (idPermiso) REFERENCES Permiso(idPermiso)
+);
+
+-- Insertar roles
+INSERT INTO Rol (nombre) VALUES ('Administrador'), ('Almacenista');
+
+-- Insertar permisos
+INSERT INTO Permiso (nombre, descripcion) VALUES 
+    ('Ver módulo inventario', 'Permite ver el módulo de inventario'),
+    ('Agregar nuevos productos', 'Permite agregar nuevos productos al inventario'),
+    ('Aumentar inventario', 'Permite aumentar el inventario de productos'),
+    ('Dar de baja/reactivar un producto', 'Permite dar de baja o reactivar un producto'),
+    ('Ver módulo para Salida de productos', 'Permite ver el módulo para la salida de productos'),
+    ('Sacar inventario del almacén', 'Permite sacar inventario del almacén'),
+    ('Ver módulo del histórico', 'Permite ver el módulo del histórico');
+
+-- Asignar permisos a roles
+INSERT INTO Rol_Permiso (idRol, idPermiso) VALUES 
+    (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7),
+    (2, 1), (2, 5), (2, 6);
+
+
